@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vue Router 数据获取</title>
+    <script src="../bower_components/vue/dist/vue.js"></script>
+    <script src="../bower_components/vue-router/dist/vue-router.js"></script>
+</head>
+<body>
+<h1>Vue Router 数据获取 - 导航完成后获取数据</h1>
+<div id="app">
+    <h1>Hello App!</h1>
+
+    <router-link to="/p/1"> 学生1</router-link>
+    <router-link to="/p/2"> 学生2</router-link>
+    <router-link to="/p/3"> 学生3</router-link>
+    <router-link to="/p/4"> 学生4</router-link>
+    <router-link to="/p/5"> 学生5</router-link>
+
+    <!--路由出口,路由匹配到的组件渲染到这里-->
+    <router-view></router-view>
+</div>
+
+<template id="personInfo">
+    <div class="post">
+        <h1>{{id}}</h1>
+        <!--加载中-->
+        <div class="loading" v-if="loading">
+            loading....
+        </div>
+        <!--错误的显示-->
+        <div class="error" v-if="error">
+            {{error}}
+        </div>
+        <div class="content" v-if="post">
+            <h2>{{post.title}}</h2>
+            <h4>{{post.body}}</h4>
+        </div>
+    </div>
+</template>
+<script>
+
+    //信息模板
+    const Person = {
+        props: ['id'],
+        template: '#personInfo',
+        data: function () {
+            return {
+                loading: false,
+                post: null,
+                error: null,
+            };
+        },
+        created: function () {
+            console.log('模板创建');
+            this.fetchData();
+        },
+        watch:{
+            '$route':'fetchData'//如果路由变化，执行该方法
+        },
+        methods: {
+            fetchData: function () {
+                var that = this;
+                this.error = this.post = null;
+                this.loading = true;
+                getPost(this.$route.params.id, function (err, post) {
+                    that.loading = false;
+                    if (err) {
+                        that.error = err.toString();
+                    } else {
+                        that.post = post;
+                    }
+                    console.log(that.loading, that.error, that.post);
+                });
+            }
+        }
+    };
+
+    const router = new VueRouter({
+        routes: [{
+            path: '/p/:id',
+            component: Person,
+            props: true,
+        }]
+    });
+
+    var app = new Vue({
+        router,
+    }).$mount('#app');
+
+    function getPost(id, calllback) {
+        var listData = {
+            1: {title: '1001', body: '学生1 的描述信息'},
+            2: {title: '1002', body: '学生2 的描述信息'},
+            3: {title: '1003', body: '学生3 的描述信息'},
+            4: {title: '1004', body: '学生4 的描述信息'},
+        };
+
+        var item = listData[parseInt(id)];
+        console.log('获取指定数据', id, item);
+        if (item) {
+            setTimeout(function (e) {
+                calllback(null, item);
+            }, 1000);
+        } else {
+            calllback("~~查无此人~~");
+        }
+    };
+</script>
+</body>
+</html>

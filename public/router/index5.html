@@ -1,0 +1,89 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vue Router 基础</title>
+    <script src="../bower_components/vue/dist/vue.js"></script>
+    <script src="../bower_components/vue-router/dist/vue-router.js"></script>
+</head>
+<body>
+<h1>Vue Router 基础 - 命名视图 </h1>
+<div id="app">
+    <h1>Hello App!</h1>
+    <p>Current route name: {{$route.name }}</p>
+
+    <router-link to="/"> home </router-link>
+    <router-link to="/food"> Food </router-link>
+    <router-link to="/fruit"> Fruit </router-link>
+
+    <router-view></router-view>
+    <router-view name="fruit-view"></router-view>
+    <router-view name="dessert-view"></router-view>
+</div>
+
+<template id="foodTemplate">
+    <h3>1、Food - {{$route.params.id}}</h3>
+</template>
+
+<template id="fruitTemplate">
+    <h3>2、Fruit - {{$route.params.id}}</h3>
+</template>
+
+<template id="dessertTemplate">
+    <h3>3、Dessert - {{$route.params.id}}</h3>
+</template>
+
+<script>
+
+    const Food = {
+        template:'#foodTemplate'
+    };
+
+    const Fruit = {
+        template:'#fruitTemplate'
+    };
+
+    const Dessert = {
+        template:'#dessertTemplate'
+    };
+
+    //TODO 3.创建路由实例
+    //创建路由实例，然后传入routes配置
+    const router = new VueRouter({
+        mode: 'history',
+        routes:[
+            {
+                path:'/fruit',
+                components:{
+                    default: Dessert,
+                    'fruit-view':Fruit,
+                    'dessert-view':Food,
+                }
+            },
+            {
+                path:'/',
+                components:{
+                    default: Food,
+                    'fruit-view':Fruit,
+                    'dessert-view':Dessert,
+                }
+            },
+            {
+                path:'/food',
+                components:{
+                    default:Fruit,
+                    'fruit-view': Food,
+                    'dessert-view':Dessert,
+                }
+            },
+        ]
+    });
+
+    const app = new Vue({
+        mode: 'history',
+        router:router
+    }).$mount('#app');
+</script>
+</body>
+</html>

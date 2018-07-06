@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SPA</title>
+</head>
+<script src="bower_components/vue/dist/vue.js"></script>
+<script src="bower_components/vue-router/dist/vue-router.js"></script>
+
+<body>
+<div id="app">
+    <h1>{{title}}</h1>
+    <ul>
+        <li>
+            <!--跳转链接v-link-->
+            <router-link to="/home">Home</router-link>
+        </li>
+        <li>
+            <router-link to="/news">News</router-link>
+        </li>
+    </ul>
+    <router-view></router-view>
+</div>
+<template id="home-tmp">
+    <div>
+        首页
+        <router-link to="/home/login">登录</router-link>
+        <router-link to="/home/reg">注册</router-link>
+        <router-view></router-view>
+    </div>
+</template>
+<template id="news-tmp">
+    <div>
+        新闻
+    </div>
+</template>
+
+<template id="login-tmp">
+    <div>
+        <h3>登录窗口</h3>
+        <router-link to="/home/login/emil">邮箱登录</router-link>
+        <router-link to="/home/login/phone">手机号登录登录</router-link>
+        <router-view></router-view>
+    </div>
+</template>
+
+<script>
+    const Home = {template:"#home-tmp"};
+    const News = {template:"#news-tmp"};
+    const Login = {template:"#login-tmp"};
+
+    //4.关联
+    var routes = [
+        {path:'/home',
+            component:Home,
+            children:[
+            {
+                path:'login',
+                component:Login,
+                children:[
+                    {
+                        path:'emil',
+                        component:{template:'<h4>邮箱登录窗口</h4>'}
+                    },
+                    {
+                        path:'phone',
+                        component:{template:'<h4>手机号登录窗口</h4>'}
+                    }
+                ]
+            },
+            {
+                path:'reg',
+                component:{template:'<h2>注册窗口</h2>'}
+            }
+        ]},
+        {path:'/news',component:News}
+    ];
+
+    //3.路由
+    var router =  new VueRouter({routes: routes});
+
+    //5.启动路由
+    new Vue({
+        data:{
+            title:'This is a SPA Example'
+        },
+        router: router
+    }).$mount('#app');
+</script>
+</body>
+</html>

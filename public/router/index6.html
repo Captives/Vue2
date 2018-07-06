@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vue Router 基础</title>
+    <script src="../bower_components/vue/dist/vue.js"></script>
+    <script src="../bower_components/vue-router/dist/vue-router.js"></script>
+    <style>
+        .top{
+            background: red;
+            height: 200px;
+            width: 100%;
+        }
+        .nav{
+            width: 300px;
+            height: 100%;
+            background: green;
+        }
+        .content{
+            width: 100%;
+            height: 100%;
+            background: yellow;
+        }
+    </style>
+</head>
+<body>
+<h1>Vue Router 基础 - 命名视图 扩展示例 </h1>
+<div id="app">
+    <h1>Hello App!</h1>
+    <p>Current route name: {{$route.name }}</p>
+
+    <router-link to="/"> home </router-link>
+    <router-link to="/theme1"> Theme01 </router-link>
+    <router-link to="/theme2"> Theme02 </router-link>
+
+    <router-view></router-view>
+    <div style="display: flex">
+        <router-view name="left-view"></router-view>
+        <router-view name="right-view"></router-view>
+    </div>
+</div>
+<template id="topTemplate">
+    <div class="top">
+        <h1>这里是顶部区域</h1>
+        <div class="fill">
+            内容区域
+        </div>
+    </div>
+</template>
+<template id="navTemplate">
+    <div class="nav">
+        <h1>这里是列表导航</h1>
+        <div class="fill">
+            内容区域
+        </div>
+    </div>
+</template>
+
+<template id="contentTemplate">
+    <div class="content">
+        <h1>这里内容区域</h1>
+        <div class="fill">
+            内容区域
+        </div>
+    </div>
+</template>
+
+<script>
+
+    const Top = {
+        template:'#topTemplate'
+    };
+
+    const Nav = {
+        template:'#navTemplate'
+    };
+
+    const Content = {
+        template:'#contentTemplate'
+    };
+
+    //TODO 3.创建路由实例
+    //创建路由实例，然后传入routes配置
+    const router = new VueRouter({
+        mode: 'history',
+        routes:[
+            {
+                path:'/',
+                components:{
+                    default: Top,
+                    'left-view':Nav,
+                    'right-view':Content,
+                }
+            },
+            {
+                path:'/theme1',
+                components:{
+                    default: Top,
+                    'left-view':Nav,
+                    'right-view':Content,
+                }
+            },
+            {
+                path:'/theme2',
+                components:{
+                    default: Top,
+                    'left-view':Content,
+                    'right-view':Nav,
+                }
+            }
+        ]
+    });
+
+    const app = new Vue({
+        mode: 'history',
+        router:router
+    }).$mount('#app');
+</script>
+</body>
+</html>

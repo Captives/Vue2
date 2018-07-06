@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vue Router 数据获取</title>
+    <script src="../bower_components/vue/dist/vue.js"></script>
+</head>
+<body>
+<h1>Vue V-IF</h1>
+<div id="app">
+    <div class="post">
+        <h1>{{id}}</h1>
+        <!--加载中-->
+        <div class="loading" v-if="loading">
+            loading....{{loading}}
+        </div>
+        <!--错误的显示-->
+        <div class="error" v-if="error">
+            {{error}}
+        </div>
+        <div class="content" v-if="post">
+            <h2>{{post.title}}</h2>
+            <h4>{{post.body}}</h4>
+        </div>
+    </div>
+</div>
+<script>
+    var app = new Vue({
+        data:{
+            id:'测试哈哈哈',
+            loading: false,
+            post: null,
+            error: null,
+        },
+        created:function () {
+            var that = this;
+            this.loading = true;
+            this.post = this.error = null;
+            this.getPost(function (err, data) {
+                that.loading = false;
+                if(err){
+                    that.error = err;
+                }else{
+                    that.post = data;
+                }
+            });
+        },
+        methods:{
+            getPost:function (callback) {
+                setTimeout(function (e) {
+                    callback('无法获取');
+                }, 1000);
+                setTimeout(function (e) {
+                    callback(null, {
+                        title:'有结果',
+                        body:'当前时间是：'+Date.now()
+                    });
+                }, 5000);
+            },
+        }
+    }).$mount('#app');
+</script>
+</body>
+</html>

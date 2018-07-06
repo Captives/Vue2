@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vue Router 基础</title>
+    <script src="../bower_components/vue/dist/vue.js"></script>
+    <script src="../bower_components/vue-router/dist/vue-router.js"></script>
+</head>
+<body>
+<h1>Vue Router 基础 - 嵌套路由 </h1>
+<div id="app">
+    <h1>Hello App!</h1>
+        <router-link to="/fruit/foo">/fruit/foo</router-link>
+        <router-link to="/fruit/foo/apple">/fruit/foo/apple</router-link>
+        <router-link to="/fruit/foo/orange">/fruit/foo/orange</router-link>
+    <router-view></router-view>
+</div>
+
+<template id="fruitTemplate">
+    <div>
+        <h3>Fruit - {{$route.params.id}}</h3>
+        <router-view style="color: red"></router-view>
+    </div>
+</template>
+
+<template id="appleTemplate">
+    <div>
+        <div>Apple - {{$route.params.id}}</div>
+    </div>
+</template>
+
+<template id="orangeTemplate">
+    <div>
+        <div>Orange - {{$route.params.id}}</div>
+    </div>
+</template>
+<script>
+
+    const Fruit = {
+        template:'#fruitTemplate'
+    };
+    const AppleTemplate = {
+        template:'#appleTemplate'
+    };
+    const OrangeTemplate = {
+        template:'#orangeTemplate'
+    };
+
+    //TODO 3.创建路由实例
+    //创建路由实例，然后传入routes配置
+    const router = new VueRouter({
+        routes:[{
+            path:'/fruit/:id',
+            component:Fruit,
+            children:[
+                {path:'', component: Fruit},
+                {path:'apple', component: AppleTemplate},
+                {path:'orange', component: OrangeTemplate},
+            ]
+        }]
+    });
+
+    const app = new Vue({
+        router:router
+    }).$mount('#app');
+</script>
+</body>
+</html>

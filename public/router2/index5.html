@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vue Router 数据获取</title>
+    <link rel="stylesheet" href="../bower_components/sweetalert2/dist/sweetalert2.min.css">
+
+    <script src="../bower_components/vue/dist/vue.js"></script>
+    <script src="../bower_components/vue-router/dist/vue-router.js"></script>
+    <script src="../bower_components/sweetalert2/dist/sweetalert2.min.js"></script>
+</head>
+<body>
+<h1>Vue Router 数据获取 - 导航完成后获取数据</h1>
+<div id="app">
+    <h1>Hello App!</h1>
+    <router-link to="/p/1"> 学生1</router-link>
+    <router-link to="/p/2"> 学生2</router-link>
+    <router-link to="/p/3"> 学生3</router-link>
+    <router-link to="/p/4"> 学生4</router-link>
+    <router-link to="/p/5"> 学生5</router-link>
+
+    <!--路由出口,路由匹配到的组件渲染到这里-->
+    <router-view></router-view>
+</div>
+
+<template id="personInfo">
+    <div class="post">
+        <h1>{{id}}</h1>
+        <!--加载中-->
+        <div class="loading" v-if="loading">
+            loading....
+        </div>
+        <!--错误的显示-->
+        <div class="error" v-if="error">
+            {{error}}
+        </div>
+        <div class="content" v-if="post">
+            <h2>{{post.title}}</h2>
+            <h4>{{post.body}}</h4>
+        </div>
+    </div>
+</template>
+<script>
+
+    //信息模板
+    const Person = {
+        props: ['id'],
+        template: '#personInfo',
+        data: function () {
+            return {
+                loading: false,
+                post: null,
+                error: null,
+            };
+        },
+        created: function () {
+            console.log('模板创建');
+        },
+        beforeRouteEnter: function (to, form, next) {
+            console.log('beforeRouteEnter');
+            getPost(to.params.id, function (err, data) {
+                next(function (vm) {
+                    vm.setData(err,data);
+                });
+            });
+        },
+        beforeRouteUpdate: function (to, form, next) {
+            console.log('beforeRouteUpdate');
+            var that = this;
+            this.post = this.error = null;
+            getPost(to.params.id, function (err, data) {
+                that.setData(err,data);
+                swal({
+                    title: "前往 " + to.path,
+                    text: "来自 " + form.path,
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'yes, go!'
+                }).then(function (result){
+                    if (result.value) {
+                        next();
+                        swal(to.path, "视图已经转入",'success');
+                    }
+                });
+            });
+        },
+        updated: function () {
+            console.log('updated');
+        },
+        methods: {
+            setData:function (err, post) {
+                this.loading = false;
+                if (err) {
+                    this.error = err.toString();
+                } else {
+                    this.post = post;
+                }
+            }
+        }
+    };
+
+    const router = new VueRouter({
+        routes: [{
+            path: '/p/:id',
+            component: Person,
+            props: true,
+        }]
+    });
+
+    var app = new Vue({
+        router,
+    }).$mount('#app');
+    function getPost(id, calllback) {
+        var list = {
+            1: {title: '1001', body: '学生1 的描述信息'},
+            2: {title: '1002', body: '学生2 的描述信息'},
+            3: {title: '1003', body: '学生3 的描述信息'},
+            4: {title: '1004', body: '学生4 的描述信息'},
+        };
+        var item = list[parseInt(id)];
+        if (item) {
+            calllback(null, item);
+        } else {
+            calllback("~~查无此人~~");
+        }
+    };
+</script>
+</body>
+</html>

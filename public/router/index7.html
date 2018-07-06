@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vue Router 基础</title>
+    <script src="../bower_components/vue/dist/vue.js"></script>
+    <script src="../bower_components/vue-router/dist/vue-router.js"></script>
+    <style>
+        .nav{
+            width: 300px;
+            height: 100%;
+            background: green;
+        }
+        .content{
+            width: 100%;
+            height: 100%;
+            background: yellow;
+        }
+        .footer{
+            width: 100%;
+            text-align: center;
+            background: yellowgreen;
+        }
+    </style>
+</head>
+<body>
+<h1>Vue Router 基础 - 嵌套命名视图 </h1>
+<div id="app">
+    <h1>Hello App!</h1>
+    <router-view></router-view>
+</div>
+
+<template id="storeNavTemplate">
+    <!--商品导航-->
+    <div class="nav">
+        <router-link to="/store/food"> Food </router-link><br>
+        <router-link to="/store/fruits"> Fruits </router-link>
+    </div>
+</template>
+
+<template id="storePage">
+    <!--商品页面-->
+    <div>
+        <h3>商品清单</h3>
+        <div style="display: flex">
+            <storenav class="nav"></storenav>
+            <div class="content">
+                <router-view class="options"></router-view>
+                <router-view name="helper" class="helper"></router-view>
+            </div>
+        </div>
+        <footernav></footernav>
+    </div>
+</template>
+<template id="footerPage">
+    <div class="footer">
+        <h3>页脚</h3>
+    </div>
+</template>
+<script>
+    const StoreNav = {template:'#storeNavTemplate'};
+    const FooterNav = {template:'#footerPage'};
+    const StorePage = {
+        template:'#storePage',
+        components: {storenav:StoreNav,'footernav':FooterNav}
+    };
+
+    const Bread = {template:'<h4>面包</h4>'};
+    const Apple = {template:'<h4>苹果</h4>'};
+    const Orange = {template:'<h4>橙子</h4>'};
+
+    //TODO 3.创建路由实例
+    //创建路由实例，然后传入routes配置
+    const router = new VueRouter({
+        mode: 'history',
+        routes:[
+            {
+                path:'/store',
+                component:StorePage,
+                children:[{
+                        path:'food',
+                        component:Bread
+                    },{
+                        path:'fruits',
+                        components:{
+                            default:Apple,
+                            helper:Orange
+                        }
+                    }
+                ]
+            }
+        ]
+    });
+    router.push('/store/fruits');
+
+    const app = new Vue({
+        mode: 'history',
+        router:router
+    }).$mount('#app');
+</script>
+</body>
+</html>

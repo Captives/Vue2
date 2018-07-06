@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vue Demo</title>
+</head>
+<script src="vue.js"></script>
+
+<body>
+<div id="app">
+    <example></example>
+</div>
+<script>
+    Vue.component('example',{
+        template:"<span>{{message}}</span>",
+        data:function () {
+            return {
+                message:'not updated'
+            }
+        },
+        methods:{
+            updateMessage:function () {
+                this.message = 'updated';
+                console.log(this.$el.textContent);
+                this.$nextTick(function(){
+                    console.log(this.$el.textContent);
+                });
+            }
+        }
+    });
+
+    var app = new Vue({
+        el:'#app',
+        data:{
+            message:'hello vue!'
+        }
+    });
+</script>
+</body>
+</html>

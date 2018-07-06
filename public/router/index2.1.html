@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vue Router 基础</title>
+    <script src="../bower_components/vue/dist/vue.js"></script>
+    <script src="../bower_components/vue-router/dist/vue-router.js"></script>
+</head>
+<body>
+<h1>Vue Router 动态路由匹配 - 响应路由参数的变化</h1>
+<div id="app">
+    <h1>Hello App!</h1>
+    <pre>
+        提醒一下，当使用路由参数时，例如从 /user/foo 导航到 /user/bar，原来的组件实例会被复用。
+        因为两个路由都渲染同个组件，比起销毁再创建，复用则显得更加高效。不过，这也意味着组件的生命周期钩子不会再被调用。
+        复用组件时，想对路由参数的变化作出响应的话，你可以简单地 watch (监测变化) $route 对象：
+    </pre>
+    <ul>
+        <li v-for="item in list">
+            <router-link :to="item.id" v-bind:title="item.id">{{item.id}} Go to {{item.name}}</router-link>
+        </li>
+    </ul>
+    <!--路由出口,路由匹配到的组件渲染到这里-->
+    <router-view></router-view>
+</div>
+<script>
+    //TODO 1.定义路由组件
+    //可以从其他文件import进来
+    const Fruit = Vue.extend({
+        template:'<div v-on:click="change" :title="title">Fruit - {{$route.params.id}} | {{title}}</div>',
+        data:function(){
+            return {title:'-'}
+        },
+        methods:{
+            change:function () {
+                alert(this.$route.path);
+            }
+        },
+        beforeRouteUpdate:function (to, from, next) {
+            console.log('from : '+ from.params.id +" - to : " + to.params.id);
+            this.title = 'beforeRouteUpdate # from : '+ from.params.id +" - to : " + to.params.id;
+            next();
+        },//或者watch观察检测
+        watch:{
+            $route:function (to, from) {
+                this.title = 'from : '+ from.params.id +" - to : " + to.params.id;
+            }
+        }
+    });
+
+    //TODO 3.创建路由实例
+    //创建路由实例，然后传入routes配置
+    const router = new VueRouter({
+        routes:[{path:'/fruit/:id', component:Fruit}]
+    });
+
+    //TODO 4.创建和挂在根实例
+    //记得要通过router配置参数注入路由，从而让整个应用都有路由功能
+    const app = new Vue({
+        data:{
+            list:[
+                {id:"/fruit/"+1001,name:'Apple'},
+                {id:"/fruit/"+1002,name:'Banana'},
+                {id:"/fruit/"+1003,name:'Orange'},
+            ]
+        },
+        router
+    }).$mount('#app');
+
+</script>
+</body>
+</html>

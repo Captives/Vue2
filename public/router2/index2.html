@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vue Router 基础</title>
+    <script src="../bower_components/vue/dist/vue.js"></script>
+    <script src="../bower_components/vue-router/dist/vue-router.js"></script>
+</head>
+<body>
+<h1>Vue Router 导航守卫</h1>
+<div id="app">
+    <h1>Hello App!</h1>
+    <ul>
+        <li v-for="item in list">
+            <router-link :to="item.id" v-bind:title="item.id">{{item.id}} Go to {{item.name}}</router-link>
+        </li>
+    </ul>
+    <!--路由出口,路由匹配到的组件渲染到这里-->
+    <router-view></router-view>
+</div>
+<script>
+    //TODO 1.定义路由组件
+    //可以从其他文件import进来
+    const Fruit = Vue.extend({
+        props:['id'],
+        template:'<div v-on:click="change">Fruit $ - {{id}}</div>',
+        data:function(){
+            return {title:100}
+        },
+        methods:{
+            change:function () {
+                alert(this.$route.path);
+            }
+        }
+    });
+
+    //TODO 3.创建路由实例
+    //创建路由实例，然后传入routes配置
+    const router = new VueRouter({
+        routes:[
+            {
+                path:'/fruit/:id', 
+                component:Fruit, 
+                props:true,
+                beforeEnter:function (to, from, next) {
+                    console.log("/fruit/:id 独享守卫", from.path,' ==> ', to.path);
+                }
+            }]
+    });
+
+    //TODO 5.全局守卫
+    //使用 router.beforeEach 注册一个全局前置守卫
+    router.beforeEach(function (to, from, next) {
+        //to: Route: 即将要进入的目标 路由对象
+        //from: Route: 当前导航正要离开的路由
+        console.log("前置守卫", from.path,' ==> ', to.path);
+
+//        setTimeout(function (e) {
+            next();
+//        },3000);
+    });
+
+    router.afterEach(function (to, from) {
+        console.log("后置守卫", from.path,' ==> ', to.path);
+    });
+    //TODO 4.创建和挂在根实例
+    //记得要通过router配置参数注入路由，从而让整个应用都有路由功能
+    const app = new Vue({
+        data:{
+            list:[
+                {id:"/fruit/"+1001,name:'Apple'},
+                {id:"/fruit/"+1002,name:'Banana'},
+                {id:"/fruit/"+1003,name:'Orange'},
+            ]
+        },
+        router
+    }).$mount('#app');
+
+</script>
+</body>
+</html>

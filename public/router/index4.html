@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vue Router 基础</title>
+    <script src="../bower_components/vue/dist/vue.js"></script>
+    <script src="../bower_components/vue-router/dist/vue-router.js"></script>
+</head>
+<body>
+<h1>Vue Router 基础 - 命名路由 </h1>
+<div id="app">
+    <h1>Hello App!</h1>
+        <p>Current route name: {{$route.name }}</p>
+        <router-link :to="{name:'home'}"> Home </router-link>
+        <router-link :to="{name:'fruit'}"> Fruit </router-link>
+        <router-link :to="{name:'apple', query:{size:1000}}"> Apple </router-link>
+        <router-link :to="{name:'orange', params:{count:1000}}"> Orage </router-link>
+    <router-view></router-view>
+</div>
+
+<template id="home">
+        <h3>Home - {{$route.params.id}}</h3>
+</template>
+
+<template id="fruitTemplate">
+        <h3>Fruit - {{$route.params.id}}</h3>
+</template>
+
+<template id="appleTemplate">
+        <h3>Apple - {{$route.params.id}}</h3>
+</template>
+
+<template id="orangeTemplate">
+        <h3>Orange - {{$route.params.id}}</h3>
+</template>
+<script>
+
+    const Home = {
+        template:'#home'
+    };
+
+    const Fruit = {
+        template:'#fruitTemplate'
+    };
+
+    const AppleTemplate = {
+        template:'#appleTemplate'
+    };
+
+    const OrangeTemplate = {
+        template:'#orangeTemplate'
+    };
+
+    //TODO 3.创建路由实例
+    //创建路由实例，然后传入routes配置
+    const router = new VueRouter({
+        routes:[
+            {path: '/', name: 'home', component: Home},
+            {path: '/fruit', name: 'fruit', component: Fruit},
+            {path: '/fruit/apple', name: 'apple', component: AppleTemplate},
+            {path: '/fruit/:id', name: 'orange', component: OrangeTemplate},
+        ]
+    });
+
+    const app = new Vue({
+        mode: 'history',
+        router:router
+    }).$mount('#app');
+</script>
+</body>
+</html>

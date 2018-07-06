@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vue 生命周期</title>
+</head>
+<script src="vue.js"></script>
+<body>
+<div id="app">
+    <h1>Vue 生命周期</h1>
+    <h3>{{message}}</h3>
+    <input type="button" value="挂载组件" onclick="mountHandler()">
+    <input type="button" value="更新组件" @click="updateHandler()">
+    <input type="button" value="销毁组件" @click="destoryHandler()">
+</div>
+<script>
+    var app;
+
+    var options = {
+        data: {
+            message: 'hello vue!'
+        },
+        beforeCreate: function () {
+            console.group('beforeCreate # 组件实例刚被创建,组件属性计算之前, 如data属性');
+            console.log('beforeCreate #', this.$el, this.$data, this.message);
+            //beforeCreate # undefined undefined undefined
+        },
+        created: function () {
+            console.group('create # 实例已经创建, 属性已经绑定, 但DOM并未生成, $el不存在');
+            console.log('create #', this.$el, this.$data, this.message);
+            // create # undefined {__ob__: Observer} hello vue!
+        },
+        beforeMount: function () {
+            console.group('beforeMount # 模板 编译/挂载 之前');
+            console.log('beforeMount #', this.$el, this.$data, this.message);
+            //beforeMount # <div id=​"app">​…​</div>​ {__ob__: Observer} hello vue!
+        },
+        mounted: function () {
+            console.group('mounted # 模板 编译/挂载 之后');
+            console.log('mounted #', this.$el, this.$data, this.message);
+            //mounted # <div id=​"app">​…​</div>​ {__ob__: Observer} hello vue!
+        },
+        beforeUpdate: function () {
+            console.group('beforeUpdate # 组件更新 之前');
+            console.log('beforeUpdate #', this.$el, this.$data, this.message);
+        },
+        updated: function () {
+            console.group('updated # 组件更新 之后');
+            console.log('updated #', this.$el, this.$data, this.message);
+        },
+        activated: function () {
+            console.group('activated # for keep-live, 组件被激活时调用');
+            console.log('activated #', this.$el, this.$data, this.message);
+        },
+        deactivated: function () {
+            console.group('deactivated # for keep-live, 组件被移除时调用');
+            console.log('deactivated #', this.$el, this.$data, this.message);
+        },
+        beforeDestroy: function () {
+            console.group('beforeDestroy # 组件销毁之前');
+            console.log('beforeDestroy #', this.$el, this.$data, this.message);
+        },
+        destroyed: function () {
+            console.group('destroyed # 组件销毁之后');
+            console.log('destroyed #', this.$el, this.$data, this.message);
+        },
+        methods: {
+            updateHandler:function (e) {
+                app.message = app.message == 'hello vue!' ? 'yes !! I do it' : 'hello vue!';
+            },
+            destoryHandler:function (e) {
+                app.$destroy();
+            }
+        }
+    };
+
+    app = new Vue(options);
+    var mountHandler = function (e) {
+        if(!app._isDestroyed){
+            app = new Vue(options);
+        }
+        app.$mount('#app');
+    };
+
+    //Chrome 浏览器F12控制台上,依次执行观察
+    //1、app.message= 'yes !! I do it';          //update
+    //2、app.destroy();                         //destroy
+    //3、app.message= 'yes !! I can't do it';    //没反应
+</script>
+</body>
+</html>

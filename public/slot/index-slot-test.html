@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>slot 占位</title>
+</head>
+<script src="../bower_components/vue/dist/vue.js"></script>
+
+<body>
+<div id="app">
+    <h1>{{title}}</h1>
+    <input type="button" @click="change()" value="banner" />
+    <input type="button" @click="change()" value="banner2" />
+    <hr>
+    <Banner>
+        <ul>
+            <li>1111111</li>
+            <li>2222222</li>
+            <li>3333333</li>
+        </ul>
+    </Banner>
+</div>
+
+<template id="banner">
+    <div>
+        <h1>banner 模板</h1>
+        <slot></slot>
+        <h3>底部描述</h3>
+    </div>
+</template>
+
+<template id="banner2">
+    <div>
+        <h1>banner2 模板</h1>
+        <slot></slot>
+        <h3>底部描述</h3>
+    </div>
+</template>
+
+<script>
+    var vm = new Vue({
+        el:'#app',
+        data:{
+            title:'这是slot示例',
+            type:'banner'
+        },
+        method:{
+            change:function (type) {
+//                vm.type = type;
+                alert(type);
+            }
+        },
+        components:{
+          'Banner':{
+              template:'#banner'
+          }
+        }
+    });
+</script>
+</body>
+</html>

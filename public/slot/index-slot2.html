@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>多个 slot 占位</title>
+</head>
+<script src="../bower_components/vue/dist/vue.js"></script>
+
+<body>
+<div id="app">
+    <h1>{{title}}</h1>
+    <hr>
+    <Banner>
+        <ul slot="ul-slot">
+            <li>1111111</li>
+            <li>2222222</li>
+            <li>3333333</li>
+        </ul>
+        <ol slot="ol-slot">
+            <li>AAAAAAAAAA</li>
+            <li>BBBBBBBBB</li>
+            <li>CCCCCCCCCCCCCCCCCCC</li>
+        </ol>
+    </Banner>
+</div>
+
+<template id="banner">
+    <div>
+        <h1>banner 模板</h1>
+        <slot name="ol-slot"></slot>
+        <h3>底部描述</h3>
+        <slot name="ul-slot"></slot>
+    </div>
+</template>
+
+<script>
+    var vm = new Vue({
+        el:'#app',
+        data:{
+            title:'这是slot示例'
+        },
+        components:{
+          'Banner':{
+              template:'#banner'
+          }
+        }
+    });
+</script>
+</body>
+</html>
